@@ -14,7 +14,8 @@ var (
 )
 
 const (
-	offset = "  "
+	offset                  = "  "
+	delayTime time.Duration = 100
 )
 
 func offsetEmpty(width, i int) string {
@@ -60,7 +61,7 @@ func writePendulum(w *bufio.Writer, width, count int) {
 	for i := 0; i < count; i++ {
 		writeLine(w, width, i)
 		w.Flush()
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(delayTime * time.Millisecond)
 		clearLine()
 	}
 
