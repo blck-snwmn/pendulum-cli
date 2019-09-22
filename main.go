@@ -38,6 +38,15 @@ func clearLine() {
 	fmt.Print("\033[2K")
 }
 
+func writeLine(w *bufio.Writer, width, i int) {
+	fmt.Fprint(w, offset)
+	fmt.Fprint(w, offsetEmpty(width, i))
+	fmt.Fprint(w, "\033[46m")
+	fmt.Fprint(w, " ")
+	fmt.Fprint(w, "\033[0m")
+	fmt.Fprint(w, "\r")
+}
+
 func main() {
 	w := bufio.NewWriter(os.Stdout)
 	fmt.Fprint(w, offset)
@@ -53,12 +62,7 @@ func main() {
 	printf := func() {
 		defer sw.Done()
 		for i := 0; i < count; i++ {
-			fmt.Fprint(w, offset)
-			fmt.Fprint(w, offsetEmpty(width, i))
-			fmt.Fprint(w, "\033[46m")
-			fmt.Fprint(w, " ")
-			fmt.Fprint(w, "\033[0m")
-			fmt.Fprint(w, "\r")
+			writeLine(w, width, i)
 			w.Flush()
 			time.Sleep(100 * time.Millisecond)
 			clearLine()
