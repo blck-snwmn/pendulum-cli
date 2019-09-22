@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -47,8 +46,7 @@ func writeLine(w *bufio.Writer, width, i int) {
 	fmt.Fprint(w, "\r")
 }
 
-func main() {
-	w := bufio.NewWriter(os.Stdout)
+func writeHeader(w *bufio.Writer, width int) {
 	fmt.Fprint(w, offset)
 	for i := 0; i < width; i++ {
 		fmt.Fprint(w, "|")
@@ -56,22 +54,23 @@ func main() {
 	fmt.Fprint(w, "\n")
 
 	w.Flush()
+}
 
-	var sw sync.WaitGroup
-	sw.Add(1)
-	printf := func() {
-		defer sw.Done()
-		for i := 0; i < count; i++ {
-			writeLine(w, width, i)
-			w.Flush()
-			time.Sleep(100 * time.Millisecond)
-			clearLine()
-		}
+func writePendulum(w *bufio.Writer, width, count int) {
+	for i := 0; i < count; i++ {
+		writeLine(w, width, i)
+		w.Flush()
+		time.Sleep(100 * time.Millisecond)
+		clearLine()
 	}
 
-	go printf()
-
-	sw.Wait()
-
 	w.Flush()
+}
+
+func main() {
+	w := bufio.NewWriter(os.Stdout)
+
+	writeHeader(w, width)
+
+	writePendulum(w, width, count)
 }
