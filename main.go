@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -37,24 +39,27 @@ func clearLine() {
 }
 
 func main() {
-	fmt.Print(offset)
+	w := bufio.NewWriter(os.Stdout)
+	fmt.Fprint(w, offset)
 	for i := 0; i < width; i++ {
-		fmt.Print("|")
+		fmt.Fprint(w, "|")
 	}
-	fmt.Print("\n")
+	fmt.Fprint(w, "\n")
+
+	w.Flush()
 
 	var sw sync.WaitGroup
 	sw.Add(1)
 	printf := func() {
 		defer sw.Done()
 		for i := 0; i < count; i++ {
-			//カーソルは先頭に
-			fmt.Print(offset)
-			fmt.Print(offsetEmpty(width, i))
-			fmt.Print("\033[46m")
-			fmt.Print(" ")
-			fmt.Print("\033[0m")
-			fmt.Print("\r")
+			fmt.Fprint(w, offset)
+			fmt.Fprint(w, offsetEmpty(width, i))
+			fmt.Fprint(w, "\033[46m")
+			fmt.Fprint(w, " ")
+			fmt.Fprint(w, "\033[0m")
+			fmt.Fprint(w, "\r")
+			w.Flush()
 			time.Sleep(100 * time.Millisecond)
 			clearLine()
 		}
@@ -63,4 +68,6 @@ func main() {
 	go printf()
 
 	sw.Wait()
+
+	w.Flush()
 }
