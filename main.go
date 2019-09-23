@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -65,22 +66,70 @@ func writeHeader(w *bufio.Writer, width int) {
 	w.Flush()
 }
 
-func writePendulum(w *bufio.Writer, width, height, count int) {
+func writePendulum(ctx context.Context, w *bufio.Writer, width, height, count int) {
+	// build
+	lines := build(ctx, width, height, count)
+	// write
+	ticker := time.NewTicker(delayTime * time.Millisecond)
+	defer ticker.Stop()
+
 	for i := 0; i < count; i++ {
-		for j := 0; j < height; j++ {
-			writeLine(w, width, i+j)
-		}
-		w.Flush()
-		time.Sleep(delayTime * time.Millisecond)
-		for j := 0; j < height; j++ {
-			fmt.Fprint(w, "\033[1F")
-			clearLine(w)
+		select {
+		case <-ticker.C:
+			for _, ch := range lines {
+				fmt.Fprint(w, "\033[2K"+<-ch+"\r\n")
+			}
+			// すべて書き込んだ後は先頭へ
+			fmt.Fprintf(w, "\033[%dF", len(lines))
+			w.Flush()
+		case <-ctx.Done():
+			return
 		}
 	}
-	// delete header
+	// clean up
 	fmt.Fprint(w, "\033[1F")
-	clearLine(w)
+	lenWithH := len(lines) + 1
+	for i := 0; i < lenWithH; i++ {
+		fmt.Fprint(w, "\033[2K\033[1E")
+	}
+	fmt.Fprintf(w, "\033[%dF", lenWithH)
 	w.Flush()
+}
+
+func build(ctx context.Context, width, height, count int) []<-chan string {
+	lines := make([]<-chan string, height)
+	for j := 0; j < height; j++ {
+		lines[j] = buildLine(ctx, width, count, j, "\033[46m \033[0m")
+	}
+	return lines
+}
+
+func buildLine(ctx context.Context, width, count, initOffset int, square string) <-chan string {
+	ch := make(chan string, count)
+
+	go func() {
+		defer close(ch)
+
+		cv := 1
+		offsetLen := Offset(initOffset) + 2
+		for i := 0; i < count; i++ {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+
+			ch <- offsetLen.String() + square
+
+			if offsetLen == 2 {
+				cv = 1
+			} else if offsetLen == Offset(width) {
+				cv = -1
+			}
+			offsetLen += Offset(cv)
+		}
+	}()
+	return ch
 }
 
 func main() {
@@ -94,10 +143,12 @@ func main() {
 	flag.IntVar(&height, "h", 20, "how long height")
 
 	flag.Parse()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	w := bufio.NewWriter(os.Stdout)
 
 	writeHeader(w, width)
 
-	writePendulum(w, width, height, count)
+	writePendulum(ctx, w, width, height, count)
 }
