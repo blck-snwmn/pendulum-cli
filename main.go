@@ -70,7 +70,9 @@ func writePendulum(w *bufio.Writer, width, height, count int) {
 			clearLine(w)
 		}
 	}
-
+	// delete header
+	fmt.Fprint(w, "\033[1F")
+	clearLine(w)
 	w.Flush()
 }
 
