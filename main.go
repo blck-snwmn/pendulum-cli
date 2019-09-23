@@ -2,16 +2,11 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
 	"time"
-)
-
-var (
-	count  = 39
-	width  = 20
-	height = 20
 )
 
 const (
@@ -77,6 +72,17 @@ func writePendulum(w *bufio.Writer, width, height, count int) {
 }
 
 func main() {
+	var (
+		count  int
+		width  int
+		height int
+	)
+	flag.IntVar(&count, "c", 100, "how long repeat count")
+	flag.IntVar(&width, "w", 40, "how long width")
+	flag.IntVar(&height, "h", 20, "how long height")
+
+	flag.Parse()
+
 	w := bufio.NewWriter(os.Stdout)
 
 	writeHeader(w, width)
