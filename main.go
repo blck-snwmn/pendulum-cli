@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -27,7 +26,14 @@ func offsetEmpty(width, i int) string {
 	} else {
 		spaceNum = spaceMax - (i - spaceMax)
 	}
-	return strings.Repeat(" ", spaceNum)
+	// 0指定は1を指定したことと同じため、空文字にする
+	var offset string
+	if spaceNum == 0 {
+		offset = ""
+	} else {
+		offset = fmt.Sprintf("\033[%dC", spaceNum)
+	}
+	return offset
 }
 
 func clearLine(w *bufio.Writer) {
