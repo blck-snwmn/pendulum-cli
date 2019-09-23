@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	count = 37
-	width = 10
+	count  = 39
+	width  = 20
+	height = 20
 )
 
 const (
@@ -34,8 +35,8 @@ func offsetEmpty(width, i int) string {
 	return strings.Repeat(" ", spaceNum)
 }
 
-func clearLine() {
-	fmt.Print("\033[2K")
+func clearLine(w *bufio.Writer) {
+	fmt.Fprint(w, "\033[2K")
 }
 
 func writeLine(w *bufio.Writer, width, i int) {
@@ -44,7 +45,7 @@ func writeLine(w *bufio.Writer, width, i int) {
 	fmt.Fprint(w, "\033[46m")
 	fmt.Fprint(w, " ")
 	fmt.Fprint(w, "\033[0m")
-	fmt.Fprint(w, "\r")
+	fmt.Fprint(w, "\r\n")
 }
 
 func writeHeader(w *bufio.Writer, width int) {
@@ -57,12 +58,17 @@ func writeHeader(w *bufio.Writer, width int) {
 	w.Flush()
 }
 
-func writePendulum(w *bufio.Writer, width, count int) {
+func writePendulum(w *bufio.Writer, width, height, count int) {
 	for i := 0; i < count; i++ {
-		writeLine(w, width, i)
+		for j := 0; j < height; j++ {
+			writeLine(w, width, i+j)
+		}
 		w.Flush()
 		time.Sleep(delayTime * time.Millisecond)
-		clearLine()
+		for j := 0; j < height; j++ {
+			fmt.Fprint(w, "\033[1F")
+			clearLine(w)
+		}
 	}
 
 	w.Flush()
@@ -73,5 +79,5 @@ func main() {
 
 	writeHeader(w, width)
 
-	writePendulum(w, width, count)
+	writePendulum(w, width, height, count)
 }
