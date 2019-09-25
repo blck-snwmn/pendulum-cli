@@ -13,7 +13,20 @@ const (
 	delayTime time.Duration = 100
 )
 
-func offsetEmpty(width, i int) string {
+// Offset is cursor offset from left
+type Offset int
+
+func (o Offset) String() (s string) {
+	// 0指定は1を指定したことと同じため、空文字にする
+	if o == 0 {
+		s = ""
+	} else {
+		s = fmt.Sprintf("\033[%dC", o)
+	}
+	return
+}
+
+func offsetEmpty(width, i int) Offset {
 	spaceMax := width - 1
 
 	// 周期は2*width-1
@@ -26,14 +39,7 @@ func offsetEmpty(width, i int) string {
 	} else {
 		spaceNum = spaceMax - (i - spaceMax)
 	}
-	// 0指定は1を指定したことと同じため、空文字にする
-	var offset string
-	if spaceNum == 0 {
-		offset = ""
-	} else {
-		offset = fmt.Sprintf("\033[%dC", spaceNum)
-	}
-	return offset
+	return Offset(spaceNum)
 }
 
 func clearLine(w *bufio.Writer) {

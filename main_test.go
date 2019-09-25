@@ -19,7 +19,7 @@ func Test_offsetEmpty(t *testing.T) {
 		want string
 	}{
 		{name: "start", args: args{width: 4, i: 0}, want: ""},
-		{name: "space max", args: args{width: 4, i: 3}, want: offsetFun(3)},
+		{name: "space max", args: args{width: 4, i: 3}, want: offsetFun(2)},
 		{name: "decrease space", args: args{width: 4, i: 4}, want: offsetFun(2)},
 		{name: "return start", args: args{width: 4, i: 6}, want: ""},
 		{name: "after return start", args: args{width: 4, i: 7}, want: offsetFun(1)},
@@ -28,7 +28,7 @@ func Test_offsetEmpty(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := offsetEmpty(tt.args.width, tt.args.i); got != tt.want {
+			if got := offsetEmpty(tt.args.width, tt.args.i); got.String() != tt.want {
 				t.Errorf("len(offsetEmpty()) = %v, want %v", got, tt.want)
 			}
 		})
