@@ -148,7 +148,26 @@ func main() {
 
 	w := bufio.NewWriter(os.Stdout)
 
-	writeHeader(w, width)
+	var drawer Drawer
+	drawer = Drawer{
+		generator: &WaveGenerator{
+			width:  width,
+			height: height,
+		},
+		delayTime: delayTime,
+		offset:    Offset(0),
+		w:         w,
+	}
+	drawer.Draw(ctx, count)
 
-	writePendulum(ctx, w, width, height, count)
+	drawer = Drawer{
+		generator: &FallnGenerator{
+			width:  width,
+			height: height,
+		},
+		delayTime: delayTime,
+		offset:    Offset(0),
+		w:         w,
+	}
+	drawer.Draw(ctx, count)
 }
