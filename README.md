@@ -1,2 +1,2 @@
 # pendulum-cli
-cli tool by golang
+cli drawing tool by golang
