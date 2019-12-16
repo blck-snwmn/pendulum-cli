@@ -1,4 +1,32 @@
-package main
+package pendulumcli
+
+import (
+	"fmt"
+)
+
+const (
+	clearLine = "\033[2K"
+)
+
+// Offset is cursor offset from left
+type Offset int
+
+func (o Offset) String() (s string) {
+	// 0指定は1を指定したことと同じため、空文字にする
+	if o == 0 {
+		s = ""
+	} else {
+		s = fmt.Sprintf("\033[%dC", o)
+	}
+	return
+}
+
+func NewDrawnLine(offset Offset, square string) DrawnLine {
+	return DrawnLine{
+		offset: offset,
+		square: square,
+	}
+}
 
 // DrawnLine is one line
 type DrawnLine struct {
@@ -8,6 +36,13 @@ type DrawnLine struct {
 
 func (w DrawnLine) String() string {
 	return w.offset.String() + w.square
+}
+
+func NewSpin(offset Offset, stateNum int) Spin {
+	return Spin{
+		offset:   offset,
+		stateNum: stateNum,
+	}
 }
 
 // Spin spin Every time String() method is called

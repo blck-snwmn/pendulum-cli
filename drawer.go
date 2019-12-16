@@ -1,4 +1,4 @@
-package main
+package pendulumcli
 
 import (
 	"bufio"
@@ -6,6 +6,16 @@ import (
 	"fmt"
 	"time"
 )
+
+// NewDrawer return new Drawer
+func NewDrawer(g Generator, delayTime time.Duration, offset Offset, w *bufio.Writer) Drawer {
+	return Drawer{
+		generator: g,
+		delayTime: delayTime,
+		offset:    Offset(0),
+		w:         w,
+	}
+}
 
 // Drawer draw lines
 type Drawer struct {
