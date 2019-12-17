@@ -38,6 +38,7 @@ func (w DrawnLine) String() string {
 	return w.offset.String() + w.square
 }
 
+// NewSpin generate Spin & return it
 func NewSpin(offset Offset, stateNum int) Spin {
 	return Spin{
 		offset:   offset,
@@ -51,9 +52,12 @@ type Spin struct {
 	stateNum int
 }
 
-func (w *Spin) String() string {
+func (s *Spin) spin() {
+	s.stateNum++
+}
+func (s *Spin) String() string {
 	var spin string
-	switch w.stateNum % 4 {
+	switch s.stateNum % 4 {
 	case 0:
 		spin = "\\"
 	case 1:
@@ -63,8 +67,8 @@ func (w *Spin) String() string {
 	case 3:
 		spin = "-"
 	}
-	w.stateNum = (w.stateNum + 1) % 4
-	return w.offset.String() + "\033[1m" + spin + "\033[0m"
+	s.spin()
+	return s.offset.String() + "\033[1m" + spin + "\033[0m"
 }
 
 //Rain is Rain. move right every time called String()
