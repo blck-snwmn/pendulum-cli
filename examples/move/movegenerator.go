@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"sync"
+
 	pendulumcli "github.com/blck-snwmn/pendulum-cli"
 )
 
@@ -33,15 +35,22 @@ func (mg *MoveGenerator) Generate(ctx context.Context, tickNum int) []<-chan fmt
 
 func (mg *MoveGenerator) build(ctx context.Context, tickNum int) []<-chan fmt.Stringer {
 	lines := make([]<-chan fmt.Stringer, len(mg.targets))
-	for i, l := range mg.targets {
-		length := len(l)
 
-		if mg.max > length {
+	var wg sync.WaitGroup
+	wg.Add(len(mg.targets))
+	for i, l := range mg.targets {
+		go func(i int, l string) {
+			length := len(l)
+
 			// 右側スペース埋め
-			l += strings.Repeat(" ", mg.max-length)
-		}
-		lines[i] = mg.buildLine(ctx, tickNum, []rune(l))
+			if mg.max > length {
+				l += strings.Repeat(" ", mg.max-length)
+			}
+			lines[i] = mg.buildLine(ctx, tickNum, []rune(l))
+			wg.Done()
+		}(i, l)
 	}
+	wg.Wait()
 	return lines
 }
 
