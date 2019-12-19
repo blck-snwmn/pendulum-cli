@@ -38,6 +38,20 @@ func (w DrawnLine) String() string {
 	return w.offset.String() + w.square
 }
 
+type MoveParts struct {
+	offset Offset
+	line   []rune
+	len    int
+}
+
+func (mp MoveParts) move() {
+
+}
+
+func (mp MoveParts) String() string {
+	return mp.offset.String()
+}
+
 // NewSpin generate Spin & return it
 func NewSpin(offset Offset, stateNum int) Spin {
 	return Spin{
