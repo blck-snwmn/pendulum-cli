@@ -85,7 +85,7 @@ func (s *Spin) String() string {
 	return s.offset.String() + "\033[1m" + spin + "\033[0m"
 }
 
-//Rain is Rain. move right every time called String()
+// Rain is Rain. move right every time called String()
 type Rain struct {
 	offset Offset
 }
