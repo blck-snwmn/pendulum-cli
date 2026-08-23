@@ -45,14 +45,26 @@ loop:
 		select {
 		case <-ticker.C:
 			for _, ch := range lines {
-				fmt.Fprint(d.w, "\033[2K")
-				fmt.Fprint(d.w, d.offset)
-				fmt.Fprint(d.w, <-ch)
-				fmt.Fprint(d.w, "\r\n")
+				if _, err := fmt.Fprint(d.w, "\033[2K"); err != nil {
+					return 0
+				}
+				if _, err := fmt.Fprint(d.w, d.offset); err != nil {
+					return 0
+				}
+				if _, err := fmt.Fprint(d.w, <-ch); err != nil {
+					return 0
+				}
+				if _, err := fmt.Fprint(d.w, "\r\n"); err != nil {
+					return 0
+				}
 			}
 			// すべて書き込んだ後は先頭へ
-			fmt.Fprintf(d.w, "\033[%dF", len)
-			d.w.Flush()
+			if _, err := fmt.Fprintf(d.w, "\033[%dF", len); err != nil {
+				return 0
+			}
+			if err := d.w.Flush(); err != nil {
+				return 0
+			}
 			// 一度書き込んだら行数分削除処理を入れる
 			isWrite = true
 		case <-ctx.Done():
@@ -70,8 +82,14 @@ loop:
 }
 func (d *Drawer) cleanUp(ctx context.Context, wl int) {
 	for i := 0; i < wl; i++ {
-		fmt.Fprint(d.w, "\033[2K\033[1E")
+		if _, err := fmt.Fprint(d.w, "\033[2K\033[1E"); err != nil {
+			return
+		}
 	}
-	fmt.Fprintf(d.w, "\033[%dF", wl)
-	d.w.Flush()
+	if _, err := fmt.Fprintf(d.w, "\033[%dF", wl); err != nil {
+		return
+	}
+	if err := d.w.Flush(); err != nil {
+		return
+	}
 }

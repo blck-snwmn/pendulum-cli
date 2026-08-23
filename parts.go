@@ -40,12 +40,6 @@ func (w DrawnLine) String() string {
 
 type MoveParts struct {
 	offset Offset
-	line   []rune
-	len    int
-}
-
-func (mp MoveParts) move() {
-
 }
 
 func (mp MoveParts) String() string {
