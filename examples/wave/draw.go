@@ -4,8 +4,9 @@ import (
 	"bufio"
 	"context"
 	"flag"
-	pendulumcli "github.com/blck-snwmn/pendulum-cli"
 	"os"
+
+	pendulumcli "github.com/blck-snwmn/pendulum-cli"
 )
 
 func main() {

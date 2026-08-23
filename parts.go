@@ -40,12 +40,6 @@ func (w DrawnLine) String() string {
 
 type MoveParts struct {
 	offset Offset
-	line   []rune
-	len    int
-}
-
-func (mp MoveParts) move() {
-
 }
 
 func (mp MoveParts) String() string {
@@ -85,7 +79,7 @@ func (s *Spin) String() string {
 	return s.offset.String() + "\033[1m" + spin + "\033[0m"
 }
 
-//Rain is Rain. move right every time called String()
+// Rain is Rain. move right every time called String()
 type Rain struct {
 	offset Offset
 }
