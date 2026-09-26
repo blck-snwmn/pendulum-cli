@@ -24,7 +24,7 @@ func (f *FallnGenerator) Generate(ctx context.Context, tickNum int) []<-chan fmt
 			defer close(ch)
 			seed := rand.NewSource(time.Now().UnixNano())
 			r := rand.New(seed)
-			for i := 0; i < tickNum; i++ {
+			for range tickNum {
 				spin := pendulumcli.NewSpin(pendulumcli.Offset(r.Intn(f.width)), 0)
 				select {
 				case <-ctx.Done():
@@ -78,7 +78,7 @@ func (f *FallnGenerator) buildLine(ctx context.Context, tickNum, ignoreNum int, 
 		buf := make(chan fmt.Stringer, tickNum)
 		defer close(buf)
 
-		for i := 0; i < tickNum; i++ {
+		for range tickNum {
 			select {
 			case <-ctx.Done():
 				return

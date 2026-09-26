@@ -34,7 +34,7 @@ func (w *WaveGenerator) buildLine(ctx context.Context, tickNum, initOffset int, 
 
 		cv := 1
 		offsetLen := pendulumcli.Offset(initOffset) + 2
-		for i := 0; i < tickNum; i++ {
+		for range tickNum {
 			select {
 			case <-ctx.Done():
 				return
