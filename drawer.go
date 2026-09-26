@@ -41,7 +41,7 @@ func (d *Drawer) draw(ctx context.Context, tickNum int, lines []<-chan fmt.Strin
 	len := len(lines)
 	isWrite := false
 loop:
-	for i := 0; i < tickNum; i++ {
+	for range tickNum {
 		select {
 		case <-ticker.C:
 			for _, ch := range lines {
@@ -81,7 +81,7 @@ loop:
 	return writedLine
 }
 func (d *Drawer) cleanUp(ctx context.Context, wl int) {
-	for i := 0; i < wl; i++ {
+	for range wl {
 		if _, err := fmt.Fprint(d.w, "\033[2K\033[1E"); err != nil {
 			return
 		}

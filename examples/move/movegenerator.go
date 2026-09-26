@@ -60,7 +60,7 @@ func (mg *MoveGenerator) buildLine(ctx context.Context, tickNum int, target []ru
 		defer close(ch)
 		drawnLen := 0
 
-		for i := 0; i < tickNum; i++ {
+		for range tickNum {
 			select {
 			case <-ctx.Done():
 				return
